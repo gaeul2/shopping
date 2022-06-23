@@ -8,17 +8,16 @@
     3) category
         name
 
-    4) product
-        user(fk), category(fk), explain, title, thumbnail, detalil_img, created_at, updated_at
+    4) CoffeeCapsule
+        seller, category, machine, name, explain, thumbnail, detali_img, created_at, updated_at
 
     5) product option
-        product(oto/fk), name, price
+        product(fk), first_option , second_option, price
 
     6) review 중복허용/안허용 결정하자
         user(fk), product(fk), rate, content, created_at, updated_at
 
     7)  like
-
         class Like(BaseModel):
             user = models)ForeignKey(User, on_delete=models)CASCADE)
             article = models)ForeignKey(Article, on_delete=models)CASCADE)

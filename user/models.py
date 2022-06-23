@@ -14,22 +14,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    username = models.CharField("아이디", max_length=50)
+    username = models.CharField("아이디", max_length=50, unique=True)#아이디로 사용하려면 unique해야함
     password = models.CharField("비밀번호", max_length=255) #해쉬화해서 저장알지?
     fullname = models.CharField("이름", max_length=10)
     phone = models.CharField("전화번호", max_length=20)
     email = models.EmailField("이메일")
     is_active = models.BooleanField("활성화 여부",default=0) #장고유저모델의 필수필드
     is_admin = models.BooleanField("관리자 여부", default=0) #장고유저모델의 필수필드
-    ROLE = [
-        ("판매자", 'Seller'),
-        ("일반사용자", "Common_user"),
-    ]
-    role = models.CharField(
-        max_length=50,
-        choices=ROLE,
-        default="일반사용자",
-    )
+    is_seller = models.BooleanField("판매자 여부")
 
     #id로 사용할 필드
     USERNAME_FIELD = 'username'
