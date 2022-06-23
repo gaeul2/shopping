@@ -1,0 +1,49 @@
+1) 모델생성
+    1)custom user
+        username(id로 사용) ,password, fullname, phone, email, permission, is_active(승인시 변경)
+
+    2) 판매자mtm / 구매자mtm
+        user
+
+    3) category
+        name
+
+    4) product
+        user(fk), category(fk), explain, title, thumbnail, detalil_img, created_at, updated_at
+
+    5) product option
+        product(oto/fk), name, price
+
+    6) review 중복허용/안허용 결정하자
+        user(fk), product(fk), rate, content, created_at, updated_at
+
+    7)  like
+
+        class Like(BaseModel):
+            user = models)ForeignKey(User, on_delete=models)CASCADE)
+            article = models)ForeignKey(Article, on_delete=models)CASCADE)
+
+            # 중복 좋아요 방지를 위해 unique constraint 만들어줌
+            class Meta:
+                constraints = [  # user와 article을 unique_index로 만들어줌) 그래서 user_id,article_id가 1/1 인 좋아요는 하나만 만들어짐
+                    models)UniqueConstraint(fields=["user", "article"], name="unique_user_article")
+                ]  # 이거 만들면 꼭 makemigrations migrate 필요
+
+    8) cart
+        user(fk),product(fk), count
+
+    9) order_list
+        user(fk), product(fk), pay_type(튜플로 지정), created_at, state (얘도 튜플로 지정)
+
+
+2. **[기능]**
+    1) 회원가입 기능 (일반 사용자 / 판매자 별로 나누기)
+    2) 카테고리 별 상품 등록/제거/조회/수정 기능 (모델에 존재하는 카테고리만 선택 가능)
+    3) 상품 별 리뷰 등록/제거/조회/수정 기능
+    4) 상품 찜하기 기능
+    5) 상품 구매 시 옵션 선택 기능 (색상 / 사이즈 등 선택 가능하도록)
+    6) 상품 장바구니 담기 버튼 누르면 장바구니에 담기는 기능
+    7) 장바구니에서 결제하면 자신이 구매한 상품 목록/상태 조회 기능 (구매자는 상태 조회만, 판매자는 제품 배송 상태 변경 가능하도록)
+    8) 일반 사용자 (구매자) / 판매자 / 관리자 별 권한 나누기
+    9) 관리자 페이지 별도 생성해서, 유저 데이터 및 구매 로그 등을 모두 볼 수 있도록 하기
+        (+ 판매자가 가입 신청 시, 관리자가 승인을 해야 가입이 완료되도록 하기)
