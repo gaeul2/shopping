@@ -145,3 +145,5 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser'
     ]
 }
+
+AUTH_USER_MODEL='user.User'

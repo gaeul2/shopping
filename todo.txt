@@ -1,6 +1,6 @@
 1) 모델생성
     1)custom user
-        username(id로 사용) ,password, fullname, phone, email, permission, is_active(승인시 변경)
+        username(id로 사용) ,password, fullname, phone, email, permission, is_active(승인시 변경),is_admin
 
     2) 판매자mtm / 구매자mtm
         user
@@ -33,7 +33,7 @@
         user(fk),product(fk), count
 
     9) order_list
-        user(fk), product(fk), pay_type(튜플로 지정), created_at, state (얘도 튜플로 지정)
+        user(fk), production_option(준튜님피드백) ,pay_type(튜플로 지정), created_at, state (얘도 튜플로 지정)
 
 
 2. **[기능]**
