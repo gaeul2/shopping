@@ -12,10 +12,10 @@
         seller, category, machine, name, explain, thumbnail, detali_img, created_at, updated_at
 
     5) product option
-        product(fk), first_option , second_option, price
+        product(fk), option, price
 
     6) review 중복허용/안허용 결정하자
-        user(fk), product(fk), rate, content, created_at, updated_at
+        author(fk), product(fk), rate, content, created_at, updated_at
 
     7)  like
         class Like(BaseModel):
@@ -32,8 +32,7 @@
         user(fk),product(fk), count
 
     9) order_list
-        user(fk), production_option(준튜님피드백) ,pay_type(튜플로 지정), created_at, state (얘도 튜플로 지정)
-
+        user(fk), production_option(준튜님피드백) ,pay_type, created_at, state
 
 2. **[기능]**
     1) 회원가입 기능 (일반 사용자 / 판매자 별로 나누기)
