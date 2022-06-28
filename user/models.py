@@ -19,8 +19,8 @@ class UserManager(BaseUserManager):
     #python manage.py createsuperuser 사용시 이 함수사용함.
     def create_superuser(self, username, password=None):
         user = self.create_user(
-            username = username,
-            password = password
+            username= username,
+            password= password
         )
         user.is_admin = True
         user.save(using=self._db)
