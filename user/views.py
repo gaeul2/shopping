@@ -24,3 +24,10 @@ class LoginView(APIView):
             auth.login(request,user)
             return Response(f'{user.fullname}님이 로그인 되었습니다.')
         return Response({"msg":'사용자가 존재하지 않거나 아직 승인 심사중입니다.'})
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        user = request.user
+        auth.logout(request)
+        return Response(f'{user.fullname}님이 로그아웃 되었습니다.')
