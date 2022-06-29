@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user.serializers import SignupSerializer, IsNotUserSerializer
+from user.serializers import SignupSerializer, InActiveUserSerializer
 from user.models import User as UserModel
 from rest_framework import status
 from rest_framework import permissions
@@ -23,13 +23,13 @@ class UserSignupView(APIView):
         return Response(signup_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class IsNotActiveUserView(APIView):
+class InActiveUserView(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self,request):
         users = UserModel.object.filter(is_active=0).all()
-        is_not_active_user_serializer = IsNotUserSerializer(users, many=True)
-        return Response(is_not_active_user_serializer.data, status=status.HTTP_200_OK)
+        inactive_user_serializer = InActiveUserSerializer(users, many=True)
+        return Response(inactive_user_serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request):
         user_list = []
@@ -39,7 +39,7 @@ class IsNotActiveUserView(APIView):
             user.save()
             user_list.append(user)
 
-        update_user_serializer = IsNotUserSerializer(user_list, many=True)
+        update_user_serializer = InActiveUserSerializer(user_list, many=True)
         return Response(update_user_serializer.data, status=status.HTTP_200_OK)
 
 

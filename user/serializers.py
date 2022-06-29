@@ -19,7 +19,7 @@ class SignupSerializer(serializers.ModelSerializer):
         return user
 
 
-class IsNotUserSerializer(serializers.ModelSerializer):
+class InActiveUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ["id", "username", "is_active", "is_seller"]
