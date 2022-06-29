@@ -17,3 +17,10 @@ class SignupSerializer(serializers.ModelSerializer):
         user.password = password
         user.save()
         return user
+
+
+class InActiveUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ["id", "username", "is_active", "is_seller"]
+
