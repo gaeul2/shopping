@@ -6,11 +6,27 @@ from django.db import models
 #custom model사용위해
 '''Todo create_user와 create_superuser 함수 완성'''
 class UserManager(BaseUserManager):
-    def create_user(self):
-        pass
+    def create_user(self, username, password=None):
+        if not username:
+            raise ValueError('username이 필요합니다.')
+        user = self.model(
+            username = username,
+            is_seller=0,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-    def create_supersuer(self):
-        pass
+    #python manage.py createsuperuser 사용시 이 함수사용함.
+    def create_superuser(self, username, password=None):
+        user = self.create_user(
+            username=username,
+            password=password
+        )
+        user.is_admin = True
+        user.is_active = True
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser):
@@ -22,6 +38,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField("활성화 여부",default=0) #장고유저모델의 필수필드
     is_admin = models.BooleanField("관리자 여부", default=0) #장고유저모델의 필수필드
     is_seller = models.BooleanField("판매자 여부")
+    created_at = models.DateTimeField(auto_now_add= True)
 
     #id로 사용할 필드
     USERNAME_FIELD = 'username'
