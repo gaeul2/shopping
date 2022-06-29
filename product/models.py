@@ -16,12 +16,12 @@ class CoffeeMachine(models.Model):
 
 class Product(models.Model): #커피캡슐
     seller = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ManyToManyField(Category)
     machine = models.ForeignKey(CoffeeMachine, on_delete=models.CASCADE)
     name = models.CharField("캡슐이름", max_length=100)
     explain = models.TextField("캡슐설명")
     thumbnail = models.FileField(upload_to='product/thumbnail')
-    detali_img = models.FileField(upload_to='product/detail')
+    detail_img = models.FileField(upload_to='product/detail')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
