@@ -5,7 +5,7 @@
     2) 판매자mtm / 구매자mtm
         user
 
-    3) category
+    3) category(coffeemachine)
         name
 
     4) CoffeeCapsule
