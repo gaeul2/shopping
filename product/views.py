@@ -16,13 +16,15 @@ class Selling_can_seller_and_Admin(permissions.BasePermission):
 class ProductView(APIView):
     permission_classes = [Selling_can_seller_and_Admin]
 
-    def post(self,request):
+    def post(self,request,id): #카테고리 별 상품 등록위해 카테고리 id를 받음
+        #1 -> 일리 2-> 네스프레소 3-> 네스카페 돌체구스토 4 ->라바짜
         request.data['seller'] = request.user.id
+        request.data['machine'] = id
 
         product_serializer = ProductSerializer(data= request.data)
         if product_serializer.is_valid():
             product_serializer.save()
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
+            return Response(f'{product_serializer.data["name"]} 상품이 등록되었습니다.', status=status.HTTP_200_OK)
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -48,8 +50,8 @@ class ProductView(APIView):
         except:
             return Response(f'잘못된 접근입니다.')
 
-#Todo category 조회안됨. Null값으로 나오는 문제 있음
+#Todo caffeemachine 별 조회
 class ProductShowView(APIView):
-    def get(self, request):
+    def get(self, request, id):
         products_serializer = ProductInfoSerializer(ProductModel.objects.all(), many=True)
         return Response(products_serializer.data, status = status.HTTP_200_OK)
