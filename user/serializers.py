@@ -24,3 +24,8 @@ class InActiveUserSerializer(serializers.ModelSerializer):
         model = UserModel
         fields = ["id", "username", "is_active", "is_seller"]
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ["fullname"]
