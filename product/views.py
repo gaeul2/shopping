@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from product.serializers import ProductSerializer, ProductInfoSerializer
 from rest_framework import permissions
 from product.models import Product as ProductModel
+from product.models import CoffeeMachine as CoffeeMachineModel
 # Create your views here.
 
 class Selling_can_seller_and_Admin(permissions.BasePermission):
@@ -50,8 +51,9 @@ class ProductView(APIView):
         except:
             return Response(f'잘못된 접근입니다.')
 
-#Todo caffeemachine 별 조회
+#Done caffeemachine 별 조회
 class ProductShowView(APIView):
     def get(self, request, id):
-        products_serializer = ProductInfoSerializer(ProductModel.objects.all(), many=True)
+        machine = CoffeeMachineModel.objects.get(id=id)
+        products_serializer = ProductInfoSerializer(ProductModel.objects.filter(machine=machine), many=True)
         return Response(products_serializer.data, status = status.HTTP_200_OK)

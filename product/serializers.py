@@ -40,8 +40,6 @@ class ProductInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductModel
-        fields = "__all__"
+        fields = ["seller", "machine", "name", "explain", "thumbnail", "detail_img"]
 
-
-
-
+        
