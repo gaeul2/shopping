@@ -3,7 +3,9 @@ from rest_framework import serializers
 from product.models import Product as ProductModel
 from product.models import CoffeeMachine as CoffeeMachineModel
 from user.serializers import UserSerializer
-from user.models import Review as ReviewModel
+from product.models import Review as ReviewModel
+from product.models import Like as LikeModel
+
 
 class CoffeeMachineSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,28 +14,24 @@ class CoffeeMachineSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ProductModel
-        fields = ["seller","name", "explain", "thumbnail", "detail_img", "machine","created_at", "updated_at"]
-        extra_kwargs = {
-
-        }
+        fields = ["seller", "name", "explain", "thumbnail", "detail_img", "machine", "created_at", "updated_at"]
 
     def create(self, validated_data):
-
-        #product 모델생성
+        print(validated_data)
+        # product 모델생성
         product = ProductModel(**validated_data)
         product.save()
         return product
 
-
     def update(self, instance, validated_data):
         for key, value in validated_data.items():
-            setattr(instance,key,value)
+            setattr(instance, key, value)
 
         instance.save()
         return instance
+
 
 class ProductInfoSerializer(serializers.ModelSerializer):
     seller = UserSerializer()
@@ -43,21 +41,24 @@ class ProductInfoSerializer(serializers.ModelSerializer):
         model = ProductModel
         fields = ["seller", "machine", "name", "explain", "thumbnail", "detail_img"]
 
+
 class SimpleProductSerializer(serializers.ModelSerializer):
     seller = UserSerializer()
+
     class Meta:
         model = ProductModel
-        fields = ["seller","name"]
+        fields = ["seller", "name"]
 
-        
+
 class ReviewSerializer(serializers.ModelSerializer):
     author = UserSerializer()
     product = SimpleProductSerializer()
+
     class Meta:
         model = ReviewModel
-        fields = ["author","product","rate","content","created_at", "updated_at"]
+        fields = ["author", "product", "rate", "content", "created_at", "updated_at"]
 
-    def create(self, validated_data): 
+    def create(self, validated_data):
         review = ReviewModel(**validated_data)
         print(validated_data)
         review.save()
@@ -69,3 +70,14 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LikeModel
+        fields = ["user", "product"]
+
+    def create(self, validated_data):
+        like = LikeModel(**validated_data)
+        like.save()
+        return like
