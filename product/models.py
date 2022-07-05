@@ -15,6 +15,7 @@ class Product(models.Model): #커피캡슐
     explain = models.TextField("캡슐설명")
     thumbnail = models.FileField(upload_to='product/thumbnail')
     detail_img = models.FileField(upload_to='product/detail')
+    like_count = models.IntegerField("좋아요 갯수", default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,3 +57,28 @@ class OrderList(models.Model):
 
     def __str__(self):
         return f'{self.user}의 구매내역'
+
+
+class Review(models.Model):
+    author = models.ForeignKey('user.USer', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rate = models.IntegerField("평점")
+    content = models.TextField("리뷰 내용")
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return f'{self.author}가 작성한 {self.product}에 대한 리뷰'
+
+
+class Like(models.Model):
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE) 
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    #중복 좋아요 방지 위한 user와 product에 제한걸기
+    #user/product는 pk값이 들어오므로 같은 pk로 같은 product_pk에 좋아요못함
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user","product"],
+                                    name='unique_like')
+        ]

@@ -10,7 +10,9 @@ urlpatterns =[
     path('product/<int:category_id>', views.ProductShowView.as_view(), name='products_by_machine'),
     
     #상품 상세페이지 + 리뷰조회, 리뷰 등록/제거/수정
-    # path('product/<int:machine_id>/<int:product_id>', views..as_view(), name='product_detail'),
     path('product/review/<int:product_id>', views.ReviewView.as_view(), name='create_review'),
     path('product/review/<int:product_id>/<int:review_id>', views.ReviewView.as_view(), name='edit_review'),
+
+    #찜하기(좋아요)
+    path('product/like/<int:product_id>', views.LikeView.as_view(), name='like_product'),
 ]
