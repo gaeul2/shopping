@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-class CoffeeMachine(models.Model):
+class CoffeeMachine(models.Model): # 카테고리
     brand = models.CharField("커피머신 브랜드", max_length=100)
 
     def __str__(self):
