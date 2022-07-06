@@ -1,12 +1,13 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from product.serializers import LikeSerializer, ProductSerializer, ProductInfoSerializer, ReviewSerializer,ProductDetailSerializer
+from product.serializers import LikeSerializer, ProductSerializer, ProductInfoSerializer, ReviewSerializer,ProductDetailSerializer, ProductOptionEditSerializer
 from rest_framework import permissions
 from product.models import Product as ProductModel
 from product.models import CoffeeMachine as CoffeeMachineModel
 from product.models import Review as ReviewModel
 from product.models import Like as LikeModel
+from product.models import ProductOption as ProductOptionModel
 from django.db import transaction
 
 
@@ -20,14 +21,51 @@ class Selling_can_seller_and_Admin(permissions.BasePermission):
 #todo 상품옵션(판매자.ver)
 # 3. 등록, 수정, 삭제 - 판매자만. 근데 이거 상품 등록할 때 같이하는게 좋잖아?
 # 추가옵션은 여기로~~~~~
-# 4. 조회는 로그인 한 누구나
+#권한은 판매자
+class ProductOptionEditView(APIView):
+    def post(self,request, product_id):
+        product = ProductModel.objects.get(id=product_id)
+        if request.user == product.seller:
+            request.data['product'] = product_id
+            product_option_edit_serializer = ProductOptionEditSerializer(data=request.data)
+            if product_option_edit_serializer.is_valid():
+                product_option_edit_serializer.save()
+                return Response(product_option_edit_serializer.data, status=status.HTTP_200_OK)
+            return Response(product_option_edit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "글을 등록한 판매자만 추가가 가능합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, option_id):
+        try:
+            product_option = ProductOptionModel.objects.get(id=option_id)
+        except ProductOptionModel.DoesNotExist:
+            return Response({"msg":"잘못된 접근입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            product_option_edit_serializer = ProductOptionEditSerializer(product_option, data=request.data ,partial=True)
+            product_option_edit_serializer.is_valid(raise_exception=True)
+            product_option_edit_serializer.save()
+            return Response(product_option_edit_serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self,request, option_id): #옵션을 삭제, 이 옵션과 연결된 상품의 옵션개수가 0개면 판매중 =0으로
+        product_option = ProductOptionModel.objects.get(id=option_id)
+        product = ProductModel.objects.get(id=product_option.product.id)
+        if request.user == product.seller:
+            option_of_product_count = ProductOptionModel.objects.filter(product=product)
+            if option_of_product_count.count() == 1: #1개면 이거 지우면 옵션없는것.
+                product_option.delete()
+                product.for_sale = 0
+                product.save()
+                return Response({"msg":"옵션이 성공적으로 삭제되었습니다. 이 상품의 옵션이 0개이므로 판매불가 상품으로 전환되었습니다."}, status=status.HTTP_200_OK)
+            return Response({"msg":"옵션이 성공적으로 삭제되었습니다."},status=status.HTTP_200_OK)
+        return Response({"msg":"정상적인 접근이 아닙니다"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 #5. 카트에 넣을때는 또 옵션고른채로 넣야해. (구매자.ver)
 # - 1. 옵션선택해서 장바구니에 넣도록 ( 상품,옵션이름,옵션내용,가격  - 한줄/두줄/여러줄, 스타벅스 호환캡슐,
 # - 2. 옵션 선택안했으면 장바구니 못넣도록 하자
-class ProductOptionEditView(APIView):
-    def post(self,request):
-        pass
+
+
+
 
 
 # Done 판매자/관리자만 등록할 수 있도록 하기
@@ -50,7 +88,6 @@ class ProductView(APIView):
 
     def put(self, request, product_id):
         product = ProductModel.objects.get(id=product_id)
-        print(product)
         if request.user == product.seller:
             edit_serializer = ProductSerializer(product, data=request.data, partial=True)
             if edit_serializer.is_valid():

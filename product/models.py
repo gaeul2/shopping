@@ -16,6 +16,7 @@ class Product(models.Model): #커피캡슐
     thumbnail = models.FileField(upload_to='product/thumbnail')
     detail_img = models.FileField(upload_to='product/detail')
     like_count = models.IntegerField("좋아요 갯수", default=0)
+    for_sale = models.BooleanField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
