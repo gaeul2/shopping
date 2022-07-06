@@ -1,5 +1,3 @@
-from functools import partial
-from itertools import product
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +7,7 @@ from product.models import Product as ProductModel
 from product.models import CoffeeMachine as CoffeeMachineModel
 from product.models import Review as ReviewModel
 from product.models import Like as LikeModel
+from product.models import ProductOption as ProductOptionModel
 from django.db import transaction
 
 
@@ -19,20 +18,35 @@ class Selling_can_seller_and_Admin(permissions.BasePermission):
         return bool(request.user.is_admin or request.user.is_seller and request.user.is_authenticated)
 
 
+#todo 상품옵션(판매자.ver)
+# 3. 등록, 수정, 삭제 - 판매자만. 근데 이거 상품 등록할 때 같이하는게 좋잖아?
+# 추가옵션은 여기로~~~~~
+# 4. 조회는 로그인 한 누구나
+
+#5. 카트에 넣을때는 또 옵션고른채로 넣야해. (구매자.ver)
+# - 1. 옵션선택해서 장바구니에 넣도록 ( 상품,옵션이름,옵션내용,가격  - 한줄/두줄/여러줄, 스타벅스 호환캡슐,
+# - 2. 옵션 선택안했으면 장바구니 못넣도록 하자
+class ProductOptionEditView(APIView):
+    def post(self,request):
+        pass
+
+
 # Done 판매자/관리자만 등록할 수 있도록 하기
 class ProductView(APIView):
     permission_classes = [Selling_can_seller_and_Admin]
 
     def post(self, request, category_id):  # 카테고리 별 상품 등록위해 카테고리 id를 받음
         # 1 -> 일리 2-> 네스프레소 3-> 네스카페 돌체구스토 4 ->라바짜
-
         request.data['seller'] = request.user.id
         request.data['machine'] = category_id
+        request.data['options'] = request.data.pop('options')[0].split(",")
 
         product_serializer = ProductSerializer(data=request.data)
+
         if product_serializer.is_valid():
             product_serializer.save()
-            return Response(f'{product_serializer.data["name"]} 상품이 등록되었습니다.', status=status.HTTP_200_OK)
+            return Response(product_serializer.data, status=status.HTTP_200_OK)
+            # return Response(f'{product_serializer.data["name"]} 상품이 등록되었습니다.', status=status.HTTP_200_OK)
         return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, product_id):
@@ -153,3 +167,5 @@ class LikeView(APIView):
             product.like_count -= 1
             product.save()
             return Response({"msg": "좋아요 삭제!"})
+
+

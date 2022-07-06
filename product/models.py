@@ -25,14 +25,14 @@ class Product(models.Model): #커피캡슐
 
 class ProductOption(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField("옵션이름", max_length=50)
+    option_name = models.CharField("옵션이름", max_length=50)
     content = models.TextField("옵션내용")
     price = models.IntegerField("가격")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.option_name
 
 
 class Cart(models.Model):
