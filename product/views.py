@@ -1,13 +1,12 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from product.serializers import LikeSerializer, ProductSerializer, ProductInfoSerializer, ReviewSerializer
+from product.serializers import LikeSerializer, ProductSerializer, ProductInfoSerializer, ReviewSerializer,ProductDetailSerializer
 from rest_framework import permissions
 from product.models import Product as ProductModel
 from product.models import CoffeeMachine as CoffeeMachineModel
 from product.models import Review as ReviewModel
 from product.models import Like as LikeModel
-from product.models import ProductOption as ProductOptionModel
 from django.db import transaction
 
 
@@ -83,17 +82,11 @@ class ProductShowView(APIView):
 
 
 # 리뷰달기
-# 1 상세페이지조회 젤 마지막 (완)
 # 2. 리뷰 등록하자 (완)
 # 3. 수정 삭제(완)
 # 4. 권한 부여
-class ReviewView(APIView):
+class ReviewEditView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, product_id):
-        reviews = ReviewModel.objects.filter(product_id=product_id)
-        review_serializer = ReviewSerializer(reviews, many=True)
-        return Response(review_serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, product_id):
         try:
@@ -111,15 +104,21 @@ class ReviewView(APIView):
             return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, product_id, review_id):
-        product = ProductModel.objects.get(id=product_id)
-        review = ReviewModel.objects.get(id=review_id)
-        if request.user.id == review.author.id:
-            review_serializer = ReviewSerializer(review, data=request.data, partial=True)
-            if review_serializer.is_valid():
-                review_serializer.save()
-                return Response({"msg": f'리뷰수정이 완료되었습니다.'}, status=status.HTTP_200_OK)
-            return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"msg": f'리뷰 작성자만 리뷰수정이 가능합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            product = ProductModel.objects.get(id=product_id)
+            review = ReviewModel.objects.get(id=review_id)
+        except ProductModel.DoesNotExist:
+            return Response({"msg":"잘못된 접근입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        except ReviewModel.DoesNotExist:
+            return Response({"msg": "잘못된 접근입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if request.user.id == review.author.id:
+                review_serializer = ReviewSerializer(review, data=request.data, partial=True)
+                if review_serializer.is_valid():
+                    review_serializer.save()
+                    return Response({"msg": f'리뷰수정이 완료되었습니다.'}, status=status.HTTP_200_OK)
+                return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"msg": f'리뷰 작성자만 리뷰수정이 가능합니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, product_id, review_id):
         try:
@@ -136,6 +135,15 @@ class ReviewView(APIView):
                 return Response({"msg": f'리뷰삭제가 완료되었습니다.'}, status=status.HTTP_200_OK)
             return Response({"msg": f'잘못된 요청입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+#리뷰 조회 #상세페이지 조회
+class ProductDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, product_id):
+        reviews = ReviewModel.objects.filter(product_id=product_id)
+        product_detail_serializer = ProductDetailSerializer(reviews, many=True)
+        return Response(product_detail_serializer.data, status=status.HTTP_200_OK)
 
 # todo
 # 좋아요 

@@ -24,7 +24,7 @@ class Product(models.Model): #커피캡슐
 
 
 class ProductOption(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="options")
     option_name = models.CharField("옵션이름", max_length=50)
     content = models.TextField("옵션내용")
     price = models.IntegerField("가격")
@@ -60,7 +60,7 @@ class OrderList(models.Model):
 
 
 class Review(models.Model):
-    author = models.ForeignKey('user.USer', on_delete=models.CASCADE)
+    author = models.ForeignKey('user.User', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.IntegerField("평점")
     content = models.TextField("리뷰 내용")
