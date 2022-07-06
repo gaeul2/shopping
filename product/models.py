@@ -16,6 +16,7 @@ class Product(models.Model): #커피캡슐
     thumbnail = models.FileField(upload_to='product/thumbnail')
     detail_img = models.FileField(upload_to='product/detail')
     like_count = models.IntegerField("좋아요 갯수", default=0)
+    for_sale = models.BooleanField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -24,15 +25,15 @@ class Product(models.Model): #커피캡슐
 
 
 class ProductOption(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    name = models.CharField("옵션이름", max_length=50)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="options")
+    option_name = models.CharField("옵션이름", max_length=50)
     content = models.TextField("옵션내용")
     price = models.IntegerField("가격")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.option_name
 
 
 class Cart(models.Model):
@@ -60,7 +61,7 @@ class OrderList(models.Model):
 
 
 class Review(models.Model):
-    author = models.ForeignKey('user.USer', on_delete=models.CASCADE)
+    author = models.ForeignKey('user.User', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rate = models.IntegerField("평점")
     content = models.TextField("리뷰 내용")
