@@ -23,10 +23,10 @@ class Selling_can_seller_and_Admin(permissions.BasePermission):
 # 추가옵션은 여기로~~~~~
 #권한은 판매자
 class ProductOptionEditView(APIView):
-    def post(self,request, product_id):
-        product = ProductModel.objects.get(id=product_id)
+    def post(self,request, id): #product_id
+        product = ProductModel.objects.get(id=id)
         if request.user == product.seller:
-            request.data['product'] = product_id
+            request.data['product'] = id
             product_option_edit_serializer = ProductOptionEditSerializer(data=request.data)
             if product_option_edit_serializer.is_valid():
                 product_option_edit_serializer.save()
@@ -34,9 +34,9 @@ class ProductOptionEditView(APIView):
             return Response(product_option_edit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"msg": "글을 등록한 판매자만 추가가 가능합니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, option_id):
+    def put(self, request, id):#option_id
         try:
-            product_option = ProductOptionModel.objects.get(id=option_id)
+            product_option = ProductOptionModel.objects.get(id=id)
         except ProductOptionModel.DoesNotExist:
             return Response({"msg":"잘못된 접근입니다."}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -45,8 +45,8 @@ class ProductOptionEditView(APIView):
             product_option_edit_serializer.save()
             return Response(product_option_edit_serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self,request, option_id): #옵션을 삭제, 이 옵션과 연결된 상품의 옵션개수가 0개면 판매중 =0으로
-        product_option = ProductOptionModel.objects.get(id=option_id)
+    def delete(self,request, id): #option_id#옵션을 삭제, 이 옵션과 연결된 상품의 옵션개수가 0개면 판매중 =0으로
+        product_option = ProductOptionModel.objects.get(id=id)
         product = ProductModel.objects.get(id=product_option.product.id)
         if request.user == product.seller:
             option_of_product_count = ProductOptionModel.objects.filter(product=product)
