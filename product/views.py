@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -213,4 +214,5 @@ class LikeView(APIView):
             product.save()
             return Response({"msg": "좋아요 삭제!"})
 
-
+def showindex(request):
+    return render(request, 'index.html')
