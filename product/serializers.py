@@ -42,12 +42,11 @@ class ProductOptionEditSerializer(serializers.ModelSerializer):  # 등록/수정
 class ProductSerializer(serializers.ModelSerializer):
     option_list = serializers.ListField(required=False)
     option = ProductOptionSerializer(many=True, read_only=True)  # Foriegn Key를 Serializer사용해야 뒤탈없음
-    machine = CoffeeMachineSerializer()
-    options = ProductOptionSerializer(many=True)
+
 
     class Meta:
         model = ProductModel
-        fields = ["seller", "name", "explain", "thumbnail", "detail_img", "machine", "option_list", "option", "options",
+        fields = ["seller", "machine", "name", "explain", "thumbnail", "detail_img", "option_list", "option",
                   "created_at", "updated_at"]
 
     def create(self, validated_data):
