@@ -50,6 +50,7 @@ class ProductSerializer(serializers.ModelSerializer):
                   "created_at", "updated_at"]
 
     def create(self, validated_data):
+        print(validated_data)
         options = validated_data.pop('option_list')[0]
 
         # product 모델생성
