@@ -5,7 +5,7 @@ from product import views
 urlpatterns =[
     path('', views.showindex, name='index'),
     # 카테고리별 상품 등록/수정/제거/조회
-    path('product/machine/<int:category_id>', views.ProductView.as_view(), name='add_product'),
+    path('machine/product/<int:category_id>', views.ProductView.as_view(), name='add_product'),
     path('product/<int:product_id>', views.ProductView.as_view(), name='edit_product'),
     path('product/<int:product_id>', views.ProductView.as_view(), name='delete_product'),
     path('product/machine/<int:category_id>', views.ProductShowView.as_view(), name='products_by_machine'),
